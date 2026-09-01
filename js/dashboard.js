@@ -4,37 +4,28 @@ console.log("rodando o java script");
 
 const systemName = "Sistema de Controle de Manutenção";
 
-let activeEquipments = 48;
-
-let maintenanceEquipments = 5;
-
-let preventiveMaintenance = 10;
-
 console.log("Nome do Sistema:" + systemName);
-
-console.info("Em Manutenção :" + maintenanceEquipments);
-
 
 const equipments = [
     {
         id:1,
         name: "Compressor",
         location : "Oficina",
-        status : "active",
+        status : "Ativo",
         patrimoy : "12-PP"
     },
     {
         id:2,
         name: "Torno",
         location : "Oficina",
-        status : "active",
+        status : "Ativo",
         patrimoy : "1-PP"
     },
     {
         id:3,
         name: "Gerador",
         location : "Casa de Maquinas",
-        status : "maintenance",
+        status : "Manutenção",
         patrimoy : "64-PP"
     }
 ];
@@ -42,11 +33,11 @@ const equipments = [
 
 
 
-const activeTotal = document.getElementById("activesTotal").textContent = activeEquipments;
+const activeTotal = document.getElementById("activesTotal");
 
-const preventiveTotal = document.getElementById("preventivesTotal").textContent = preventiveMaintenance;
+const preventiveTotal = document.getElementById("preventivesTotal");
 
-const maintenance = document.getElementById("maintenanceEquipmentsTotal");
+const maintenanceEquipmentsTotal = document.getElementById("maintenanceEquipmentsTotal");
 
 const equipmentsTable = document.getElementById("equipmentsTable");
 
@@ -60,13 +51,16 @@ const modal = new bootstrap.Modal(modalElement);
 
 const btnSave = document.getElementById("btnSaveEquipment");
 
+const equipmentName = document.getElementById("equipmentName");
+
+const equipmentLocation = document.getElementById("equipmentLocation");
 
 
 function dashboardRefresh() 
 {
-    const actives = equipments.filter(equipment => equipment.status === "active");
+    const actives = equipments.filter(equipment => equipment.status === "Ativo").length;
 
-    const inMaintenance = equipments.filter(equipment => equipment.status === "maintenance").length;
+    const inMaintenance = equipments.filter(equipment => equipment.status === "Manutenção").length;
 
     activeTotal.textContent = actives;
     maintenanceEquipmentsTotal.textContent = inMaintenance;
@@ -88,7 +82,7 @@ function equipmentsTableRender(list)
             <td>${equipment.name}</td>
             <td>${equipment.location}</td>
             <td>${equipment.status}</td>
-            <td><button class = "btn-danger" onclick = "equipmentDelete(${equipment.id})">Excluir</button>
+            <td><button class = "btn btn-danger" onclick = "equipmentDelete(${equipment.id})">Excluir</button>
             </td>
         `;
 
@@ -111,21 +105,27 @@ btnNewEquipament.addEventListener("click" , function () {
     modal.show();  
 })
 
-const equipmentName = document.getElementById("equipmentName");
+
 
 btnSave.addEventListener("click",function ()
 {
     if (equipmentName.value.trim() === "") {
-        console.warn("Nome d equipamento não informado");
+        console.warn("Nome do equipamento não informado");
         alert("Informe o nome do equipamento.");
+        return;
+    }  
+
+    if (equipmentLocation.value.trim() === "") {
+        console.warn("Local do equipamento não informado");
+        alert("Informe o local do equipamento.");
         return;
     }  
     
     const newEquipment = {
         id : equipments.length + 1,
         name: equipmentName.value,
-        location : "Não Informador",
-        status : "active",
+        location : equipmentLocation.value,
+        status : "Ativo",
         patrimoy: `${String(equipments.length + 1).padStart(3, "0")}-PP`
     }
 
@@ -135,6 +135,7 @@ btnSave.addEventListener("click",function ()
 
     modal.hide();
     equipmentName.value = "";
+    equipmentLocation.value = "";
 })
 
 function equipmentDelete(id) 
@@ -142,7 +143,7 @@ function equipmentDelete(id)
     const index = equipments.findIndex(equipment => equipment.id === id);
     if (index === 1) 
     {
-        console.error("Equipamento não encontrador:", id);
+        console.error("Equipamento não encontrado:", id);
         return;    
     }   
     equipments.splice(index,1);
