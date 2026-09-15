@@ -1,3 +1,4 @@
+
 console.log("rodando o java script");
 
 
@@ -56,19 +57,19 @@ const equipmentName = document.getElementById("equipmentName");
 const equipmentLocation = document.getElementById("equipmentLocation");
 
 
-function dashboardRefresh() 
-{
-    const actives = equipments.filter(equipment => equipment.status === "Ativo").length;
+// function dashboardRefresh() 
+// {
+//     const actives = equipments.filter(equipment => equipment.status === "Ativo").length;
 
-    const inMaintenance = equipments.filter(equipment => equipment.status === "Manutenção").length;
+//     const inMaintenance = equipments.filter(equipment => equipment.status === "Manutenção").length;
 
-    activeTotal.textContent = actives;
-    maintenanceEquipmentsTotal.textContent = inMaintenance;
+//     activeTotal.textContent = actives;
+//     maintenanceEquipmentsTotal.textContent = inMaintenance;
 
-    console.log("Dashboard atualizado");
-}
+//     console.log("Dashboard atualizado");
+// }
 
-dashboardRefresh();
+// dashboardRefresh();
 
 
 function equipmentsTableRender(list) 
@@ -152,3 +153,27 @@ function equipmentDelete(id)
 
     console.log("Equipamento removido",id);
 }
+
+async function dashboardLoad() {
+    try {
+        const response = await fetch("http://localhost:3000/dashboard");
+        
+        if (!response.ok) {
+            throw new Error("Não foi possivel carregar o  dashboard");
+        }
+        const data = await response.json();
+        console.log("Dados recebidos:",data);
+
+        const actives = data.activeEquipaments;
+        const inMaintenance = data.inMaintenance;
+        const preventiveEquips = data.preventiveMaintenance;
+        
+        activeTotal.textContent = actives;
+        maintenanceEquipmentsTotal.textContent = inMaintenance;
+        preventiveTotal.textContent = preventiveEquips;
+
+    } catch (error) {
+        console.error("Erro ao carregar a dashboard:",error);
+    }
+}
+dashboardLoad();
